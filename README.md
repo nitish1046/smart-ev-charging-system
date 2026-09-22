@@ -65,7 +65,7 @@ The platform solves core EV charging bottlenecks:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/smart-ev-charging-system.git
+   git clone https://github.com/nitish1046/smart-ev-charging-system.git
    cd smart-ev-charging-system
    ```
 
