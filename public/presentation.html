@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart EV Charging Station Management System - 3D Interactive Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #070c14;
+      color: #f8fafc;
+      overflow: hidden;
+      user-select: none;
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.78);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(51, 65, 85, 0.6);
+    }
+    .glass-pill {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(51, 65, 85, 0.7);
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.3);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.6);
+    }
+  </style>
+</head>
+<body class="relative w-screen h-screen font-sans">
+
+  <!-- 3D WebGL Canvas Container -->
+  <div id="webgl-container" class="absolute inset-0 z-0 cursor-grab active:cursor-grabbing"></div>
+
+  <!-- Ambient Vignettes -->
+  <div class="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/80 via-black/40 to-transparent z-10"></div>
+  <div class="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-10"></div>
+
+  <!-- TOP HEADER -->
+  <header class="absolute top-0 inset-x-0 z-30 flex items-center justify-between px-6 py-4">
+    <!-- Brand -->
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-cyan-500/20 font-black text-white text-lg">
+        ⚡
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs uppercase tracking-widest font-semibold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+            3D Interactive Deck
+          </span>
+          <span class="text-xs text-slate-400 font-mono">2026 Edition</span>
+        </div>
+        <h1 class="text-base font-bold text-white tracking-tight">Smart EV Charging Station Management System</h1>
+      </div>
+    </div>
+
+    <!-- Center: Slide Progress -->
+    <div class="flex items-center gap-3 glass-pill px-4 py-1.5 rounded-full shadow-lg">
+      <button id="btn-open-grid" class="flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-white transition">
+        <span>❖</span>
+        <span id="header-slide-num" class="font-mono text-cyan-300 font-bold">01</span>
+        <span class="text-slate-500">/</span>
+        <span class="font-mono text-slate-400">11</span>
+      </button>
+      <div class="w-24 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-emerald-400 to-cyan-400 transition-all duration-300" style="width: 9%;"></div>
+      </div>
+    </div>
+
+    <!-- Right: Tools -->
+    <div class="flex items-center gap-2">
+      <button id="btn-sound" class="p-2.5 rounded-xl glass-pill hover:border-cyan-500/50 text-cyan-400 transition shadow-sm text-sm" title="Toggle Sound FX">
+        🔊
+      </button>
+      <button id="btn-theme" class="p-2.5 rounded-xl glass-pill hover:border-cyan-500/50 text-amber-300 transition shadow-sm text-sm" title="Toggle Lighting Theme">
+        ☀️
+      </button>
+      <button id="btn-fullscreen" class="p-2.5 rounded-xl glass-pill hover:border-cyan-500/50 text-slate-300 hover:text-white transition shadow-sm text-sm" title="Fullscreen (F)">
+        ⛶
+      </button>
+      <a href="/" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-semibold transition shadow-sm">
+        ✕ <span class="hidden sm:inline">Exit PPT</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN SLIDE OVERLAY CARD -->
+  <main class="absolute left-6 md:left-12 top-24 bottom-28 w-full max-w-xl md:max-w-2xl pointer-events-none z-20 flex flex-col justify-end">
+    <div class="pointer-events-auto glass-card rounded-3xl p-6 md:p-8 shadow-2xl shadow-black/80 transition-all duration-500">
+      <!-- Tag Row -->
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <span id="slide-badge-num" class="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+          SLIDE 01
+        </span>
+        <span id="slide-category" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+          Executive Vision
+        </span>
+        <span id="slide-badge" class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
+          System Overview
+        </span>
+        <span id="live-v2g-badge" class="hidden ml-auto px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse">
+          ⚡ V2G Discharge Active
+        </span>
+        <span id="live-scan-badge" class="hidden ml-auto px-2.5 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 animate-pulse">
+          🔍 Diagnostic Scan
+        </span>
+      </div>
+
+      <!-- Title & Subtitle -->
+      <h2 id="slide-title" class="text-2xl md:text-3xl font-extrabold text-white tracking-tight leading-snug mb-1">
+        Smart EV Charging Station Management System
+      </h2>
+      <p id="slide-subtitle" class="text-sm md:text-base font-medium text-cyan-400/90 mb-4">
+        The Intelligent Software Nervous System Powering Next-Gen E-Mobility
+      </p>
+
+      <!-- Summary -->
+      <p id="slide-summary" class="text-xs md:text-sm text-slate-300 leading-relaxed mb-5 border-l-2 border-cyan-500/60 pl-3">
+        A comprehensive, cloud-native EV-CSMS acting as the central nexus between the electric grid, localized distributed energy resources (Solar PV + BESS), charging station hardware, and EV fleet operations.
+      </p>
+
+      <!-- 3 Key Points -->
+      <div id="slide-keypoints" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+        <!-- Rendered via JS -->
+      </div>
+
+      <!-- 4 Metrics -->
+      <div id="slide-metrics" class="grid grid-cols-2 md:grid-cols-4 gap-2.5 pt-3 border-t border-slate-800/80">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </main>
+
+  <!-- 3D INTERACTIVE CONTROLS HUD (Top Right) -->
+  <div class="absolute right-6 top-24 z-20 flex flex-col gap-2.5">
+    <button id="btn-orbit" class="flex items-center gap-2 px-3.5 py-2.5 rounded-xl glass-pill text-xs font-semibold text-slate-200 hover:text-white transition shadow-xl" title="Toggle Free 3D Orbit [O]">
+      <span>🧭</span>
+      <span id="btn-orbit-text">Free 3D Orbit [O]</span>
+    </button>
+    <button id="btn-scan" class="flex items-center gap-2 px-3.5 py-2.5 rounded-xl glass-pill text-xs font-semibold text-slate-200 hover:text-white transition shadow-xl" title="Trigger Holographic Laser Scanner">
+      <span>🔍</span>
+      <span>Scan Hardware</span>
+    </button>
+    <button id="btn-v2g" class="flex items-center gap-2 px-3.5 py-2.5 rounded-xl glass-pill text-xs font-semibold text-slate-200 hover:text-white transition shadow-xl" title="Toggle V2G Power Reversal">
+      <span>⚡</span>
+      <span id="btn-v2g-text">Reverse V2G Flow</span>
+    </button>
+    <button id="btn-notes" class="flex items-center gap-2 px-3.5 py-2.5 rounded-xl glass-pill text-xs font-semibold text-slate-200 hover:text-white transition shadow-xl" title="Open Speaker Notes [N]">
+      <span>📝</span>
+      <span>Speaker Notes [N]</span>
+    </button>
+  </div>
+
+  <!-- BOTTOM PRESENTER BAR -->
+  <footer class="absolute bottom-0 inset-x-0 z-30 flex items-center justify-between px-6 py-4">
+    <!-- Hotkey shortcuts -->
+    <div class="hidden lg:flex items-center gap-4 text-[11px] text-slate-400">
+      <span class="flex items-center gap-1.5">
+        <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono text-[10px] text-slate-300">← / →</kbd>
+        <span>Navigate</span>
+      </span>
+      <span class="flex items-center gap-1.5">
+        <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono text-[10px] text-slate-300">O</kbd>
+        <span>Free Orbit</span>
+      </span>
+      <span class="flex items-center gap-1.5">
+        <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono text-[10px] text-slate-300">N</kbd>
+        <span>Speaker Notes</span>
+      </span>
+      <span class="flex items-center gap-1.5">
+        <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 font-mono text-[10px] text-slate-300">F</kbd>
+        <span>Fullscreen</span>
+      </span>
+    </div>
+
+    <!-- Center Navigation Controls -->
+    <div class="flex items-center gap-3 mx-auto lg:mx-0 glass-pill px-4 py-2 rounded-2xl shadow-2xl">
+      <button id="btn-prev" class="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition">
+        <span>◀</span> <span class="hidden sm:inline">Prev</span>
+      </button>
+
+      <button id="btn-autoplay" class="p-2 rounded-xl bg-slate-800/60 hover:text-white text-slate-400 text-xs transition" title="Auto-Play Presentation (12s per slide)">
+        ▶
+      </button>
+
+      <!-- Step dots -->
+      <div id="slide-dots" class="flex items-center gap-1.5 px-2">
+        <!-- Rendered via JS -->
+      </div>
+
+      <button id="btn-next" class="flex items-center gap-1 px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-bold text-xs shadow-md shadow-cyan-500/20 transition">
+        <span>Next</span> <span>▶</span>
+      </button>
+    </div>
+
+    <!-- Right: Deck Grid -->
+    <div class="hidden sm:flex items-center gap-2">
+      <button id="btn-deck-grid" class="flex items-center gap-2 px-3 py-2 rounded-xl glass-pill text-xs font-semibold text-slate-300 hover:text-white transition shadow-md">
+        <span>❖</span>
+        <span>Slide Deck Grid</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- SPEAKER NOTES DRAWER -->
+  <aside id="notes-drawer" class="hidden absolute right-0 top-0 bottom-0 w-full sm:w-96 bg-slate-950/95 backdrop-blur-2xl border-l border-slate-800 z-40 p-6 flex-col shadow-2xl">
+    <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+      <div class="flex items-center gap-2">
+        <span class="text-indigo-400 text-lg">📝</span>
+        <h3 class="font-bold text-white text-base">Speaker Notes & Teleprompter</h3>
+      </div>
+      <button id="btn-close-notes" class="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
+        ✕
+      </button>
+    </div>
+    <div class="flex-1 overflow-y-auto space-y-4 pr-1">
+      <div class="bg-slate-900/80 rounded-xl p-3 border border-slate-800">
+        <span id="notes-target-slide" class="text-[10px] uppercase font-mono tracking-wider text-cyan-400 font-bold block mb-1">
+          Slide 01 Target
+        </span>
+        <h4 id="notes-target-title" class="text-sm font-bold text-white">Slide Title</h4>
+      </div>
+      <div class="bg-indigo-950/30 border border-indigo-900/50 rounded-xl p-4">
+        <span class="text-xs uppercase font-mono text-indigo-400 font-bold block mb-2">
+          Presenter Script (Verbatim Talking Points)
+        </span>
+        <p id="notes-content" class="text-sm text-slate-200 leading-relaxed italic">
+          "..."
+        </p>
+      </div>
+      <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-800 space-y-2">
+        <span class="text-xs uppercase font-mono text-slate-400 font-bold block">
+          Technical Layer Reference
+        </span>
+        <div id="notes-arch" class="text-xs text-slate-300 space-y-1.5">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- SLIDE DECK GRID MODAL -->
+  <div id="grid-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex-col p-6 sm:p-12 overflow-y-auto">
+    <div class="max-w-6xl w-full mx-auto flex items-center justify-between pb-6 border-b border-slate-800 mb-8">
+      <div>
+        <span class="text-xs font-mono uppercase text-cyan-400 tracking-wider">
+          Interactive Deck Index
+        </span>
+        <h2 class="text-2xl font-black text-white">All 11 Presentation Slides</h2>
+      </div>
+      <button id="btn-close-grid" class="p-2 rounded-xl bg-slate-900 text-slate-300 hover:text-white border border-slate-700">
+        ✕
+      </button>
+    </div>
+    <div id="grid-cards-container" class="max-w-6xl w-full mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Rendered via JS -->
+    </div>
+  </div>
+
+  <!-- IMPORT THREE.JS & ORBITCONTROLS VIA ESM -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // SLIDE DATA DEFINITION
+    const SLIDES = [
+      {
+        num: '01',
+        category: 'Executive Vision',
+        badge: 'System Overview',
+        title: 'Smart EV Charging Station Management System',
+        subtitle: 'The Intelligent Software Nervous System Powering Next-Gen E-Mobility',
+        summary: 'A comprehensive, cloud-native EV-CSMS acting as the central nexus between the electric grid, localized distributed energy resources (Solar PV + BESS), charging station hardware, and EV fleet operations.',
+        keyPoints: [
+          { tag: 'Microgrid Core', title: 'Grid & Solar Synergy', desc: 'Autonomous balancing between utility feeds, solar canopy, and battery storage.' },
+          { tag: 'Open Standards', title: 'Protocol Interop', desc: 'OCPP 2.0.1, ISO 15118-20 Plug & Charge, and OCPI 2.2.1 roaming.' },
+          { tag: 'Carrier Grade', title: '99.2% Uptime SLA', desc: 'AI-driven automated self-healing, predictive diagnostics and remote resolution.' }
+        ],
+        metrics: [
+          { label: 'Active Nodes', value: '2,450+', trend: '+38% YoY' },
+          { label: 'Fleet Uptime', value: '99.2%', trend: 'NEVI Compliant' },
+          { label: 'Peak Shaved', value: '4.8 MW', trend: '-34% Demand Cost' },
+          { label: 'Annual Clean MWh', value: '18.2 GWh', trend: '100% Green Match' }
+        ],
+        arch: {
+          edge: 'Smart Inverters, MID Meters, Embedded Linux RTOS Controllers',
+          ingest: 'OCPP 2.0.1 (WebSockets/WSS), ISO 15118 TLS PKI, MQTT Streams',
+          cloud: 'Dynamic Load Balancer, AI Predictive Engine, Automated Billing'
+        },
+        cam: { pos: [14, 10, 16], target: [0, 1.5, 0], fov: 45 },
+        mode: 'overview',
+        notes: 'Welcome everyone. Today we are presenting the architecture and real-world deployment of our Smart EV Charging Station Management System (EV-CSMS). In this opening 3D scene, notice how the microgrid is integrated: we have the high-voltage grid transformer on the left, the solar canopy on top, the commercial battery storage unit behind, and the dual-gun DC fast chargers servicing electric vehicles. Our CSMS unifies these disparate energy systems into one autonomous digital twin.'
+      },
+      {
+        num: '02',
+        category: 'Market Challenges',
+        badge: 'Pain Points',
+        title: 'The Unmanaged Charging Crisis',
+        subtitle: 'Grid Overloads, 20% Charger Failure Rates & Runaway Demand Charges',
+        summary: 'Deploying high-power DC fast charging (150kW - 350kW) without intelligent management triggers catastrophic utility demand penalties, localized transformer trip-outs, and pervasive consumer dissatisfaction.',
+        keyPoints: [
+          { tag: 'Transformer Stress', title: 'Grid Congestion', desc: 'Simultaneous unmanaged charging of 10 commercial EVs overwhelms distribution substations.' },
+          { tag: 'Reliability Crisis', title: 'The 20% Downtime Dilemma', desc: 'Legacy networks suffer from unresponsive payment terminals and contactor wear.' },
+          { tag: 'Financial Bottleneck', title: 'Utility Demand Charges', desc: 'Demand charges can account for over 70% of a charging station\'s monthly electric bill.' }
+        ],
+        metrics: [
+          { label: 'Legacy Failure Rate', value: '20.8%', trend: 'Industry Avg' },
+          { label: 'Demand Charge Share', value: '68%', trend: 'Operating Expense' },
+          { label: 'Transformer Lead Time', value: '78 Wks', trend: 'Supply Chain' },
+          { label: 'User Abandonment', value: '14.2%', trend: 'Auth Dropoffs' }
+        ],
+        arch: {
+          edge: 'Problem A: Uncontrolled coincidence factor (100% simultaneous peak load)',
+          ingest: 'Problem B: Zero edge fault isolation causing cascade charger shutdowns',
+          cloud: 'Problem C: Lack of dynamic tariff pass-through resulting in negative gross margins'
+        },
+        cam: { pos: [-10, 5, 8], target: [-6, 2, -2], fov: 42 },
+        mode: 'grid_stress',
+        notes: 'Looking at the 3D scene, our camera focuses down on the substation transformer. Notice the pulsing amber warning rings. When multiple fast-chargers ramp up simultaneously without smart management, the local transformer overheats. Furthermore, utility demand charges can turn a profitable station into a money-losing asset overnight unless peak power is autonomously shaved.'
+      },
+      {
+        num: '03',
+        category: 'Architecture & Standards',
+        badge: 'Open Protocols',
+        title: 'Standards-Based Interoperability',
+        subtitle: 'OCPP 2.0.1, ISO 15118-20 Plug & Charge & OCPI Roaming',
+        summary: 'Built strictly on open-industry protocols to eliminate vendor lock-in. Our modular microservices architecture enables secure hardware interchangeability and frictionless multi-network roaming.',
+        keyPoints: [
+          { tag: 'Hardware Control', title: 'OCPP 2.0.1 Stack', desc: 'Advanced device management, security profiles 1-3 with TLS 1.3, and display messaging.' },
+          { tag: 'Zero-Touch Auth', title: 'ISO 15118-20 Plug & Charge', desc: 'Cryptographic X.509 PKI certificate handshake directly between vehicle and charger.' },
+          { tag: 'Global Roaming', title: 'OCPI 2.2.1 Roaming', desc: 'Cross-network billing, real-time CDR exchange, and reservation settlement.' }
+        ],
+        metrics: [
+          { label: 'Auth Latency', value: '< 850ms', trend: 'ISO 15118 TLS' },
+          { label: 'Security Level', value: 'TLS 1.3', trend: 'Hardware Trust' },
+          { label: 'OCPP Compliance', value: 'v2.0.1', trend: 'OCTT Certified' },
+          { label: 'Roaming Hubs', value: '14 Hubs', trend: 'OCPI 2.2.1' }
+        ],
+        arch: {
+          edge: 'OCPP WebSockets Client (JSON over WSS) + Local Offline Proxy (SQLite cache)',
+          ingest: 'Apache Kafka Event Bus (100k events/sec) + Redis Hot Telemetry Cache',
+          cloud: 'Go/Node.js Microservices, TimescaleDB, Multi-tenant Postgres'
+        },
+        cam: { pos: [0, 14, 8], target: [0, 2, 0], fov: 38 },
+        mode: 'iot_network',
+        notes: 'We now zoom up into a high-angle technical perspective. Notice the pulsating radio wave rings emitting from the edge IoT gateway. We do not use proprietary vendor APIs; everything is standardized on OCPP 2.0.1 and ISO 15118. With Plug & Charge, drivers simply plug the cable into the vehicle—the vehicle automatically presents its cryptographic certificate, authenticates within 850 milliseconds, and begins charging with zero app or RFID interaction.'
+      },
+      {
+        num: '04',
+        category: 'Smart Energy Core',
+        badge: 'Dynamic Load Management',
+        title: 'Dynamic Load Balancing & Microgrid Synergy',
+        subtitle: 'Peak Shaving, Solar PV Optimization & Sub-Second Phase Balancing',
+        summary: 'Our AI Dynamic Load Management (DLM) engine continuously samples grid capacity, building baseline loads, solar PV production, and BESS reserves to modulate current limits across all dispensers every 250 milliseconds.',
+        keyPoints: [
+          { tag: 'Zero-Overload', title: 'Hierarchical DLM', desc: 'Prioritizes critical fleet vehicles while dynamically scaling down consumer chargers.' },
+          { tag: 'Renewables First', title: 'Solar Self-Consumption', desc: 'Directs 100% of onsite rooftop solar generation directly into connected EV batteries.' },
+          { tag: 'Peak Shaving', title: 'BESS Buffer', desc: 'Deploys localized battery storage during sudden charging ramps to shield the utility feeder.' }
+        ],
+        metrics: [
+          { label: 'Current Throttling', value: '250ms', trend: 'Sub-Second' },
+          { label: 'Solar Capture', value: '96.4%', trend: 'Direct to EV' },
+          { label: 'Demand Reduction', value: '42%', trend: 'Lower Utility Cost' },
+          { label: 'Phase Imbalance', value: '< 2.1%', trend: 'IEEE 519 Compliant' }
+        ],
+        arch: {
+          edge: 'Real-time Smart Meter (Modbus TCP) + Solar Inverter Pyranometer + BESS state',
+          ingest: 'Quadratic Programming (QP) optimization solving power distribution every 250ms',
+          cloud: 'SetChargingProfile.req dispatched to all dispensers via OCPP smart charging profile'
+        },
+        cam: { pos: [6, 7, -6], target: [2, 2.5, -2], fov: 40 },
+        mode: 'energy_balance',
+        notes: 'Look at the 3D scene now: our camera is framed between the solar canopy and the BESS battery container. Watch the flowing green solar particles and cyan battery lines. When three vehicles plug in simultaneously, rather than drawing 300 kW directly from the utility transformer, our DLM algorithm activates the battery storage and solar inverter, supplying 180 kW locally and keeping grid draw well under the contracted threshold.'
+      },
+      {
+        num: '05',
+        category: 'Grid Interactivity',
+        badge: 'V2G / V2X Technology',
+        title: 'Vehicle-to-Grid (V2G) & Virtual Power Plants',
+        subtitle: 'Turning Parked EVs into Decentralized Battery Storage Assets',
+        summary: 'Bi-directional DC charging transforms idle vehicle fleets into revenue-generating grid assets capable of supplying fast frequency response, synthetic inertia, and peak export power back to the grid.',
+        keyPoints: [
+          { tag: 'Bi-Directional', title: 'Bi-Directional DC Flow', desc: 'ISO 15118-20 power control enabling vehicle discharge back into the hub and microgrid.' },
+          { tag: 'VPP Network', title: 'VPP Aggregation', desc: 'Aggregates thousands of plugged-in EVs to participate in wholesale energy markets.' },
+          { tag: 'Cell Protection', title: 'Battery Health Preservation', desc: 'Enforces non-degrading micro-cycling limits, SOC floors, and thermal protection.' }
+        ],
+        metrics: [
+          { label: 'Fleet Capacity', value: '12.4 MWh', trend: 'Aggregate VPP' },
+          { label: 'Discharge Revenue', value: '$1,150', trend: '/ Vehicle / Year' },
+          { label: 'Frequency Response', value: '< 400ms', trend: 'Sub-Second Support' },
+          { label: 'Cycle Degradation', value: '< 0.03%', trend: 'Smart Micro-Cycling' }
+        ],
+        arch: {
+          edge: 'Bi-directional SiC (Silicon Carbide) Inverters with 97.8% round-trip efficiency',
+          ingest: 'OpenADR 2.0b Virtual Top Node (VTN) receiving automated demand response dispatch',
+          cloud: 'Smart contracts paying revenue share directly to driver digital wallets'
+        },
+        cam: { pos: [-4, 3, 5], target: [-1, 1.2, 1], fov: 36 },
+        mode: 'v2g_reverse',
+        notes: 'Notice the dramatic change in our 3D animation! The energy particles are now reversing direction—flowing from the vehicle\'s battery pack, back through the charging cable, into the microgrid, and out to the transformer. This is Vehicle-to-Grid (V2G) in action. Parked cars are no longer just energy consumers; they act as a distributed Virtual Power Plant, earning up to $1,150 per vehicle annually by supporting grid frequency during peak events.'
+      },
+      {
+        num: '06',
+        category: 'Reliability & Uptime',
+        badge: 'Digital Twin & AI',
+        title: 'Predictive Maintenance & Digital Twin Diagnostics',
+        subtitle: 'AI Thermal Profiling, Contactor Wear Prediction & 99%+ SLA Uptime',
+        summary: 'A complete real-time Digital Twin telemetry model continuously cross-checks thermal sensors, insulation resistance, voltage ripple, and connector locking pins to diagnose degradation before hardware failures manifest.',
+        keyPoints: [
+          { tag: 'Thermal Safety', title: 'AI Thermal Anomaly Detection', desc: 'Tracks pin temperatures on connectors to detect cable degradation and prevent throttling.' },
+          { tag: 'Zero-Touch Recovery', title: 'Automated Self-Healing Routine', desc: 'Performs remote soft/hard reboot loops and isolated power module cycling without truck rolls.' },
+          { tag: 'NEVI 97%+ SLA', title: 'SLA & NEVI Compliance Tracker', desc: 'Automated uptime auditing ensuring every port maintains greater than 97.0% uptime.' }
+        ],
+        metrics: [
+          { label: 'Mean Time to Repair', value: '18 Mins', trend: '-76% Reduction' },
+          { label: 'Prevented Outages', value: '342', trend: 'Pre-Failure Alerts' },
+          { label: 'Truck Rolls Avoided', value: '81.4%', trend: 'Remote Resolved' },
+          { label: 'Audited Uptime', value: '99.42%', trend: 'Federally Certified' }
+        ],
+        arch: {
+          edge: '10Hz sampling of thermocouple sensors, pilot signal PWM, and DC bus capacitance',
+          ingest: 'Edge LightGBM model detecting abnormal resistance spikes and oxidation',
+          cloud: 'Jira/ServiceNow webhooks auto-dispatching technicians with exact replacement parts'
+        },
+        cam: { pos: [2.5, 3.2, 3], target: [0.8, 1.8, 0], fov: 34 },
+        mode: 'scanner_diagnostic',
+        notes: 'In this 3D view, watch the holographic laser scanner sweep across the internal components of the DC fast charger. Our Digital Twin monitors internal contactor cycles, capacitor health, and cable pin temperature at 10 Hertz. In 81% of cases, issues such as locked pins or firmware deadlocks are autonomously cleared by our self-healing software without ever sending a technician on site.'
+      },
+      {
+        num: '07',
+        category: 'Driver Experience',
+        badge: 'UX & Monetization',
+        title: 'Driver Experience & Automated Monetization',
+        subtitle: 'Zero-Tap Authentication, Dynamic Tariffs & Multi-Tenant Billing',
+        summary: 'A seamless digital experience combining ISO 15118 Plug & Charge, mobile app bay reservations, dynamic real-time kilowatt pricing, and automated enterprise expense reporting.',
+        keyPoints: [
+          { tag: 'Zero-Touch', title: 'Frictionless Plug & Charge', desc: 'No apps to download, no RFID cards to tap, and no card skimming vulnerabilities.' },
+          { tag: 'Dynamic Tariffs', title: 'Dynamic Congestion Pricing', desc: 'Adjusts tariffs based on day-ahead spot electricity prices and station queuing congestion.' },
+          { tag: 'Enterprise ERP', title: 'Multi-Tenant Fleet Billing', desc: 'Automated Charge Detail Records (CDR) split corporate fleet charging with one-click accounting.' }
+        ],
+        metrics: [
+          { label: 'Driver Rating', value: '4.92 / 5', trend: '+1.2 vs Industry' },
+          { label: 'Payment Time', value: '0.0s', trend: 'With Plug & Charge' },
+          { label: 'Billing Accuracy', value: '99.999%', trend: 'MID Certified Meters' },
+          { label: 'Idle Fee Compliance', value: '92.8%', trend: 'Cleared in <10m' }
+        ],
+        arch: {
+          edge: 'React Native Mobile App + In-Dash Apple CarPlay / Android Automotive Apps',
+          ingest: 'Stripe / Adyen Level 1 PCI-DSS compliant credit card processing & Apple Pay',
+          cloud: 'Automated PDF billing, tax calculations, and ERP connectors (SAP, QuickBooks)'
+        },
+        cam: { pos: [1.2, 2.0, 1.8], target: [0.3, 1.6, 0.2], fov: 32 },
+        mode: 'kiosk_zoom',
+        notes: 'We\'ve stepped into the driver\'s perspective right at the charging kiosk display. Notice the high-contrast display showing live session metrics. With our system, the driver experiences zero friction: dynamic pricing transparently displays current utility rates, bay reservation guarantees their stall before arrival, and idle fees incentivize rapid bay clearance so waiting queues are minimized.'
+      },
+      {
+        num: '08',
+        category: 'Commercial Fleet',
+        badge: 'Fleet Depot Management',
+        title: 'Commercial Fleet Depot Orchestration',
+        subtitle: 'Departure-Targeted Charging, Route Scheduling & Power Prioritization',
+        summary: 'Tailored for municipal transit buses, delivery vans, and logistics fleets. Our algorithms prioritize power delivery according to vehicle departure schedules, daily route mileage, and battery pre-conditioning needs.',
+        keyPoints: [
+          { tag: 'Schedule Lock', title: 'Departure-Targeted Scheduling', desc: 'Guarantees 100% of fleet vehicles reach required SOC right before morning route departure.' },
+          { tag: 'Smart Queuing', title: 'Sequential vs Proportional', desc: 'Switches between sequential high-power charging for early dispatch vans and trickle charging.' },
+          { tag: 'Thermal Efficiency', title: 'Cabin & Battery Preconditioning', desc: 'Draws grid power while plugged in to condition battery, preserving 15-20% extra range.' }
+        ],
+        metrics: [
+          { label: 'Depot Fleet Size', value: '150 Vans', trend: 'Supported per Hub' },
+          { label: 'On-Time Dispatch', value: '99.94%', trend: 'Zero Route Delays' },
+          { label: 'Fleet Power Savings', value: '31.2%', trend: 'Off-Peak Charging' },
+          { label: 'Range Extension', value: '+18%', trend: 'Grid Preconditioning' }
+        ],
+        arch: {
+          edge: 'Geotab, Samsara, and OEM APIs streaming live vehicle SOC, GPS, and route distance',
+          ingest: 'Mixed Integer Linear Programming (MILP) scheduling charging slots overnight',
+          cloud: 'Local edge controller maintains schedule execution even during cloud network loss'
+        },
+        cam: { pos: [-8, 8, 12], target: [-2, 1.5, 0], fov: 42 },
+        mode: 'fleet_depot',
+        notes: 'This perspective overlooks the commercial fleet depot. When managing 150 electric delivery vans, you cannot charge them all at once. Our system ingests telematics data from each vehicle—route distance, driver schedule, and current battery level—and solves an automated schedule. Vans scheduled for 6 AM departure receive priority charging first, optimizing for off-peak overnight electricity rates.'
+      },
+      {
+        num: '09',
+        category: 'Financials & ESG',
+        badge: 'Economic ROI & Sustainability',
+        title: 'Economic ROI & Grid Decarbonization',
+        subtitle: '3.2-Year Hardware Payback, 42% Demand Charge Savings & Zero Scope 2',
+        summary: 'Smart charging is not just an operational necessity—it is a high-yield financial investment. By stacking peak shaving, solar self-consumption, demand response revenue, and carbon credits, station operators achieve rapid payback.',
+        keyPoints: [
+          { tag: 'Revenue Stacking', title: 'Multi-Stream Revenue', desc: 'Combines dispensing markups, idle fees, demand response payouts, and carbon credits.' },
+          { tag: 'Opex Slashed', title: 'Peak Demand Mitigation', desc: 'Reduces peak utility charges by over $18,000 annually per 4-dispenser hub via BESS.' },
+          { tag: '100% Green Match', title: 'Audited Scope 2 Decarbonization', desc: 'Matches charging events with hourly renewable grid availability for verified ESG reporting.' }
+        ],
+        metrics: [
+          { label: 'Project Payback', value: '3.2 Yrs', trend: 'Hardware + Install' },
+          { label: 'Annual Opex Saved', value: '$42,600', trend: 'Per Station Hub' },
+          { label: 'Internal Rate of Return', value: '24.6%', trend: '10-Year Pro Forma' },
+          { label: 'CO2 Offset / Yr', value: '480 Tons', trend: '105 Cars Equivalent' }
+        ],
+        arch: {
+          edge: 'Kiosk markup, subscription club memberships, idle penalties, utility capacity credits',
+          ingest: 'Hourly eGRID marginal carbon factor integration verifying clean energy origin',
+          cloud: 'Temperature-capped fast charging extending dispenser power module lifespan by 40%'
+        },
+        cam: { pos: [12, 6, -10], target: [0, 2, 0], fov: 44 },
+        mode: 'golden_hour',
+        notes: 'Notice the golden-hour ambient lighting illuminating the station. From a financial perspective, our EV-CSMS transforms charging infrastructure from a cost center into a high-return asset. By actively clipping demand peaks and capturing solar generation, operators save over $42,000 per station annually in utility expenses, resulting in a full capital expenditure payback in just 3.2 years.'
+      },
+      {
+        num: '10',
+        category: 'Future Roadmap',
+        badge: 'Next-Gen Tech',
+        title: 'The Next Frontier: Megawatt Charging & Autonomy',
+        subtitle: '3.75 MW Megawatt Charging (MCS), Robotic Docking & AI Power Trading',
+        summary: 'As heavy-duty Class 8 trucks and autonomous robotaxi fleets scale, our architecture is already architected for liquid-cooled Megawatt Charging, automated robotic docking hands-free connectors, and peer-to-peer microgrid trading.',
+        keyPoints: [
+          { tag: '3.75 MW Peak', title: 'Megawatt Charging System (MCS)', desc: 'Delivers up to 3,000A at 1,250V (3.75 MW) to replenish a 40-ton electric semi-truck in 20m.' },
+          { tag: 'Hands-Free', title: 'Autonomous Robotic Docking', desc: 'Vision and 6-axis robotic arms autonomously plug into vehicles with zero human intervention.' },
+          { tag: 'AI Energy Agent', title: 'Autonomous AI Microgrid Trading', desc: 'Multi-agent RL algorithms trading energy autonomously between neighboring hubs.' }
+        ],
+        metrics: [
+          { label: 'Peak Charging Power', value: '3.75 MW', trend: 'MCS Standard' },
+          { label: 'Truck 0-80% Time', value: '18 Mins', trend: 'Turnaround Time' },
+          { label: 'Robotic Alignment', value: '< 2.0mm', trend: 'Laser Guidance' },
+          { label: 'Trading Arbitrage', value: '+14.8%', trend: 'Autonomous P2P' }
+        ],
+        arch: {
+          edge: 'Liquid-cooled (glycol-water) charging cables maintaining safe touch temperatures at 3000A',
+          ingest: 'ROS 2 (Robot Operating System) + Depth camera AI recognizing port insertion angles',
+          cloud: 'Decentralized energy smart contracts executing peer-to-peer energy trades in milliseconds'
+        },
+        cam: { pos: [2, 1.8, 4.5], target: [0, 1.4, 0], fov: 30 },
+        mode: 'megawatt_future',
+        notes: 'Looking forward to the next decade: commercial semi-trucks require megawatt-scale power. Our management platform is ready for the Megawatt Charging System standard, capable of safely coordinating up to 3.75 Megawatts per vehicle. Furthermore, as autonomous robotaxis take over our roads, robotic charging arms will plug in vehicles without any human intervention.'
+      },
+      {
+        num: '11',
+        category: 'Conclusion & Action',
+        badge: 'Strategic Blueprint',
+        title: 'Architecture Blueprint & Implementation Roadmap',
+        subtitle: 'From Pilot to Fleet-Scale Microgrid: 4-Phase Deployment Framework',
+        summary: 'A battle-tested deployment methodology to transition legacy stations into fully autonomous, revenue-optimized smart microgrids with zero disruption to active charging operations.',
+        keyPoints: [
+          { tag: 'Month 1', title: 'Phase 1: Telemetry & Edge Gateway', desc: 'Deploy OCPP 2.0.1 edge controllers and smart metering for 100% asset visibility.' },
+          { tag: 'Month 2-3', title: 'Phase 2: Dynamic Load Management', desc: 'Activate sub-second load balancing and building peak shaving to reduce demand charges.' },
+          { tag: 'Month 4-6', title: 'Phase 3: Solar PV & BESS Microgrid', desc: 'Integrate onsite renewables and battery storage to buffer high-power charging.' }
+        ],
+        metrics: [
+          { label: 'Deployment Time', value: '30 Days', trend: 'Phase 1 Launch' },
+          { label: 'Lifetime Uptime', value: '99.5%', trend: 'Guaranteed SLA' },
+          { label: 'Annual Savings', value: '$180k+', trend: 'Per 10-Bay Depot' },
+          { label: 'Net Zero Target', value: '100%', trend: 'Scope 2 Matched' }
+        ],
+        arch: {
+          edge: 'Cloud-native Kubernetes clusters with 99.99% multi-region redundancy',
+          ingest: 'SOC 2 Type II certified, ISO 27001, end-to-end TLS 1.3 encryption with HSM key storage',
+          cloud: '24/7/365 Network Operations Center (NOC) with automated failover and rapid response'
+        },
+        cam: { pos: [14, 11, 16], target: [0, 1.5, 0], fov: 46 },
+        mode: 'panoramic_orbit',
+        notes: 'To conclude: transforming your EV charging network into a smart, grid-responsive ecosystem is achievable through our 4-phase roadmap. We invite you to test our interactive 3D model: toggle Free Orbit mode to inspect any angle, or test our V2G discharge and diagnostic scanning simulations. Thank you, and we welcome your questions.'
+      }
+    ];
+
+    // AUDIO SYNTHESIZER
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContext();
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
+        if (type === 'slide') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(740, now + 0.18);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          osc.start(now);
+          osc.stop(now + 0.18);
+        } else if (type === 'scan') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(880, now);
+          osc.frequency.linearRampToValueAtTime(440, now + 0.25);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'v2g') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(140, now);
+          osc.frequency.linearRampToValueAtTime(220, now + 0.3);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(600, now);
+          gain.gain.setValueAtTime(0.04, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        }
+      } catch (e) {}
+    }
+
+    // SCENE SETUP
+    const container = document.getElementById('webgl-container');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x070c14);
+    scene.fog = new THREE.FogExp2(0x070c14, 0.022);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(14, 10, 16);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.maxPolarAngle = Math.PI / 2 - 0.02;
+    controls.minDistance = 2;
+    controls.maxDistance = 35;
+    controls.enabled = false;
+
+    let targetCameraPos = new THREE.Vector3(14, 10, 16);
+    let targetLookAt = new THREE.Vector3(0, 1.5, 0);
+    let currentLookAt = new THREE.Vector3(0, 1.5, 0);
+    let isFreeOrbit = false;
+    let v2gReverse = false;
+    let isScanning = false;
+    let currentTheme = 'cyber';
+    let currentSlideIdx = 0;
+
+    // LIGHTING
+    const ambientLight = new THREE.AmbientLight(0x1a2639, 1.8);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xa5c9ff, 2.5);
+    dirLight.position.set(15, 22, 12);
+    dirLight.castShadow = true;
+    dirLight.shadow.mapSize.width = 2048;
+    dirLight.shadow.mapSize.height = 2048;
+    scene.add(dirLight);
+
+    const chargerHaloLight = new THREE.PointLight(0x10b981, 3.5, 6);
+    chargerHaloLight.position.set(0, 2.6, 0);
+    scene.add(chargerHaloLight);
+
+    const evUnderglow = new THREE.PointLight(0x06b6d4, 2.5, 5);
+    evUnderglow.position.set(0, 0.15, 3.2);
+    scene.add(evUnderglow);
+
+    const substationLight = new THREE.PointLight(0xf59e0b, 1.5, 8);
+    substationLight.position.set(-6.5, 3.5, -2.5);
+    scene.add(substationLight);
+
+    // GROUND
+    const groundGeo = new THREE.PlaneGeometry(60, 60);
+    const groundMat = new THREE.MeshStandardMaterial({ color: 0x090f1a, roughness: 0.65, metalness: 0.25 });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    const grid = new THREE.GridHelper(50, 50, 0x1e293b, 0x0f172a);
+    grid.position.y = 0.005;
+    scene.add(grid);
+
+    // Parking Bay
+    const bayGeo = new THREE.PlaneGeometry(3.2, 5.5);
+    const bayMat = new THREE.MeshBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.18 });
+    const bay = new THREE.Mesh(bayGeo, bayMat);
+    bay.rotation.x = -Math.PI / 2;
+    bay.position.set(0, 0.01, 3.2);
+    scene.add(bay);
+
+    // CHARGER DISPENSER
+    const stationGroup = new THREE.Group();
+    const plinth = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.2, 1.0), new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.5 }));
+    plinth.position.y = 0.1;
+    plinth.castShadow = true;
+    stationGroup.add(plinth);
+
+    const body = new THREE.Mesh(new THREE.BoxGeometry(0.9, 2.5, 0.6), new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.2, metalness: 0.8 }));
+    body.position.y = 1.35;
+    body.castShadow = true;
+    stationGroup.add(body);
+
+    const haloGeo = new THREE.TorusGeometry(0.38, 0.04, 16, 32);
+    const haloMat = new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x10b981, emissiveIntensity: 1.2 });
+    const halo = new THREE.Mesh(haloGeo, haloMat);
+    halo.rotation.x = Math.PI / 2;
+    halo.position.set(0, 2.65, 0);
+    stationGroup.add(halo);
+
+    // Screen Canvas
+    const screenCanvas = document.createElement('canvas');
+    screenCanvas.width = 512;
+    screenCanvas.height = 384;
+    const screenCtx = screenCanvas.getContext('2d');
+    const screenTexture = new THREE.CanvasTexture(screenCanvas);
+    const screenMesh = new THREE.Mesh(new THREE.PlaneGeometry(0.68, 0.52), new THREE.MeshBasicMaterial({ map: screenTexture }));
+    screenMesh.position.set(0, 1.72, 0.305);
+    stationGroup.add(screenMesh);
+
+    // Charging Cable Tube
+    const cableCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0.38, 0.95, 0.2),
+      new THREE.Vector3(0.55, 0.4, 0.8),
+      new THREE.Vector3(0.35, 0.15, 1.4),
+      new THREE.Vector3(0.0, 0.2, 2.0),
+      new THREE.Vector3(-0.85, 0.88, 2.35)
+    ]);
+    const cableMesh = new THREE.Mesh(new THREE.TubeGeometry(cableCurve, 32, 0.038, 10, false), new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.5 }));
+    cableMesh.castShadow = true;
+    stationGroup.add(cableMesh);
+    scene.add(stationGroup);
+
+    // ELECTRIC VEHICLE
+    const evGroup = new THREE.Group();
+    evGroup.position.set(0, 0, 3.2);
+
+    const carBodyMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.9, roughness: 0.15 });
+    const carLower = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.45, 4.2), carBodyMat);
+    carLower.position.y = 0.45;
+    carLower.castShadow = true;
+    evGroup.add(carLower);
+
+    const carCabin = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.55, 2.3), new THREE.MeshPhysicalMaterial({ color: 0x0f172a, transmission: 0.85, roughness: 0.05, transparent: true, opacity: 0.8 }));
+    carCabin.position.set(0, 0.85, -0.1);
+    evGroup.add(carCabin);
+
+    // Battery pack cells underneath
+    const batteryGroup = new THREE.Group();
+    batteryGroup.position.set(0, 0.24, 0);
+    const batteryCells = [];
+    for (let row = -2; row <= 2; row++) {
+      for (let col = -1.5; col <= 1.5; col++) {
+        const cell = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.08, 0.38), new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x10b981, emissiveIntensity: 0.6 }));
+        cell.position.set(col * 0.38, 0.03, row * 0.48);
+        batteryGroup.add(cell);
+        batteryCells.push(cell);
+      }
+    }
+    evGroup.add(batteryGroup);
+
+    // Wheels
+    const wheelGeo = new THREE.CylinderGeometry(0.36, 0.36, 0.26, 20);
+    const tireMat = new THREE.MeshStandardMaterial({ color: 0x111827 });
+    [[-0.96, 0.36, -1.3], [0.96, 0.36, -1.3], [-0.96, 0.36, 1.3], [0.96, 0.36, 1.3]].forEach(([x, y, z]) => {
+      const wheel = new THREE.Mesh(wheelGeo, tireMat);
+      wheel.rotation.z = Math.PI / 2;
+      wheel.position.set(x, y, z);
+      evGroup.add(wheel);
+    });
+    scene.add(evGroup);
+
+    // SOLAR CANOPY
+    const canopyGroup = new THREE.Group();
+    canopyGroup.position.set(0, 0, 1.5);
+    const colMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.7 });
+    const col1 = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.14, 4.2, 16), colMat);
+    col1.position.set(-2.4, 2.1, 0);
+    const col2 = col1.clone();
+    col2.position.set(2.4, 2.1, 0);
+    canopyGroup.add(col1, col2);
+
+    const solarRoof = new THREE.Mesh(new THREE.BoxGeometry(6.2, 0.12, 6.8), new THREE.MeshStandardMaterial({ color: 0x091e3a, metalness: 0.8, roughness: 0.2 }));
+    solarRoof.position.set(0, 4.2, 0.5);
+    solarRoof.rotation.x = -0.12;
+    canopyGroup.add(solarRoof);
+
+    const solarGrid = new THREE.GridHelper(6, 12, 0x38bdf8, 0x1e3a5f);
+    solarGrid.position.set(0, 4.28, 0.5);
+    solarGrid.rotation.x = -0.12;
+    canopyGroup.add(solarGrid);
+    scene.add(canopyGroup);
+
+    // BESS
+    const bessGroup = new THREE.Group();
+    bessGroup.position.set(4.5, 0, -1.8);
+    const bessBox = new THREE.Mesh(new THREE.BoxGeometry(2.4, 2.6, 1.6), new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.5 }));
+    bessBox.position.y = 1.3;
+    bessGroup.add(bessBox);
+
+    const coolingFans = [];
+    const fanBladeGeo = new THREE.BoxGeometry(0.42, 0.05, 0.02);
+    const fanMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, metalness: 0.8 });
+    [-0.5, 0.5].forEach((xOff) => {
+      const hub = new THREE.Group();
+      hub.position.set(xOff, 1.8, 0.84);
+      for (let i = 0; i < 4; i++) {
+        const b = new THREE.Mesh(fanBladeGeo, fanMat);
+        b.rotation.z = (i * Math.PI) / 2;
+        hub.add(b);
+      }
+      bessGroup.add(hub);
+      coolingFans.push(hub);
+    });
+    scene.add(bessGroup);
+
+    // SUBSTATION
+    const subGroup = new THREE.Group();
+    subGroup.position.set(-6.5, 0, -2.5);
+    const trans = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 1.8, 20), new THREE.MeshStandardMaterial({ color: 0x475569 }));
+    trans.position.y = 1.2;
+    subGroup.add(trans);
+
+    const warningRing = new THREE.Mesh(new THREE.RingGeometry(0.4, 0.6, 24), new THREE.MeshBasicMaterial({ color: 0xef4444, transparent: true, opacity: 0, side: THREE.DoubleSide }));
+    warningRing.rotation.x = Math.PI / 2;
+    warningRing.position.set(0, 2.7, 0);
+    subGroup.add(warningRing);
+    scene.add(subGroup);
+
+    // PARTICLE FLOWS
+    const particleSystems = [];
+    function createFlow(curve, colorHex, count, size) {
+      const geo = new THREE.BufferGeometry();
+      const positions = new Float32Array(count * 3);
+      const offsets = new Float32Array(count);
+      for (let i = 0; i < count; i++) {
+        offsets[i] = i / count;
+        const pt = curve.getPoint(offsets[i]);
+        positions[i * 3] = pt.x;
+        positions[i * 3 + 1] = pt.y;
+        positions[i * 3 + 2] = pt.z;
+      }
+      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const mat = new THREE.PointsMaterial({ color: colorHex, size, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending });
+      const pts = new THREE.Points(geo, mat);
+      scene.add(pts);
+      const sys = { curve, points: pts, count, offsets, speed: 0.25 };
+      particleSystems.push(sys);
+      return sys;
+    }
+
+    const gridCurve = new THREE.CatmullRomCurve3([new THREE.Vector3(-6.5, 2.2, -2.5), new THREE.Vector3(-3.5, 2.8, -1.2), new THREE.Vector3(0, 1.4, 0)]);
+    createFlow(gridCurve, 0xfbbf24, 50, 0.06);
+
+    const solarCurve = new THREE.CatmullRomCurve3([new THREE.Vector3(0, 4.1, 0.5), new THREE.Vector3(0, 2.8, -0.2), new THREE.Vector3(0, 1.6, 0)]);
+    createFlow(solarCurve, 0x10b981, 40, 0.05);
+
+    const bessCurve = new THREE.CatmullRomCurve3([new THREE.Vector3(4.5, 1.4, -1.8), new THREE.Vector3(2.5, 1.8, -0.9), new THREE.Vector3(0, 1.4, 0)]);
+    createFlow(bessCurve, 0x06b6d4, 40, 0.05);
+
+    const cableFlow = createFlow(cableCurve, 0x38bdf8, 60, 0.07);
+
+    // HOLOGRAPHIC SCANNER
+    const scanPlane = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 3.5), new THREE.MeshBasicMaterial({ color: 0x06b6d4, transparent: true, opacity: 0, side: THREE.DoubleSide }));
+    scanPlane.rotation.x = Math.PI / 2;
+    scene.add(scanPlane);
+
+    const scanRing = new THREE.Mesh(new THREE.RingGeometry(1.6, 1.75, 48), new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0, side: THREE.DoubleSide }));
+    scanRing.rotation.x = Math.PI / 2;
+    scene.add(scanRing);
+
+    // SCREEN DISPLAY UPDATE
+    function updateScreen(time) {
+      const ctx = screenCtx;
+      const grad = ctx.createLinearGradient(0, 0, 512, 384);
+      grad.addColorStop(0, '#020617');
+      grad.addColorStop(1, '#0f172a');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 384);
+
+      ctx.fillStyle = '#06b6d4';
+      ctx.fillRect(0, 0, 512, 45);
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText('EV-CSMS DISPENSER #01 - ACTIVE', 20, 32);
+
+      ctx.fillStyle = v2gReverse ? '#f59e0b' : '#10b981';
+      ctx.beginPath();
+      ctx.roundRect(360, 10, 135, 26, 13);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText(v2gReverse ? 'V2G EXPORT' : 'FAST CHARGING', 375, 28);
+
+      const basePower = v2gReverse ? -35.4 : 148.6;
+      const kw = (basePower + Math.sin(time * 4) * 1.5).toFixed(1);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '16px sans-serif';
+      ctx.fillText('POWER OUTPUT', 30, 95);
+      ctx.fillStyle = v2gReverse ? '#fbbf24' : '#38bdf8';
+      ctx.font = 'bold 54px monospace';
+      ctx.fillText(`${kw} kW`, 30, 150);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '16px sans-serif';
+      ctx.fillText('STATE OF CHARGE (SOC)', 30, 275);
+      ctx.fillStyle = '#1e293b';
+      ctx.beginPath();
+      ctx.roundRect(30, 295, 452, 28, 6);
+      ctx.fill();
+
+      ctx.fillStyle = '#10b981';
+      ctx.beginPath();
+      ctx.roundRect(30, 295, 452 * 0.68, 28, 6);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 18px monospace';
+      ctx.fillText('68%', 30 + 452 * 0.68 - 45, 316);
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '14px sans-serif';
+      ctx.fillText('ISO 15118-20 SECURE TLS 1.3  •  DLM OPTIMIZED', 30, 360);
+
+      screenTexture.needsUpdate = true;
+    }
+
+    // ANIMATION LOOP
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const time = clock.getElapsedTime();
+      const delta = clock.getDelta();
+
+      if (!isFreeOrbit) {
+        camera.position.lerp(targetCameraPos, 0.04);
+        currentLookAt.lerp(targetLookAt, 0.04);
+        camera.lookAt(currentLookAt);
+      } else {
+        controls.update();
+      }
+
+      updateScreen(time);
+
+      coolingFans.forEach((fan, idx) => {
+        fan.rotation.z += idx % 2 === 0 ? 0.08 : -0.08;
+      });
+
+      // Update particles
+      particleSystems.forEach((sys) => {
+        const positions = sys.points.geometry.attributes.position.array;
+        const isCable = sys === cableFlow;
+        const dir = isCable && v2gReverse ? -1 : 1;
+        for (let i = 0; i < sys.count; i++) {
+          sys.offsets[i] += sys.speed * delta * dir;
+          if (sys.offsets[i] > 1.0) sys.offsets[i] -= 1.0;
+          if (sys.offsets[i] < 0.0) sys.offsets[i] += 1.0;
+          const pt = sys.curve.getPoint(sys.offsets[i]);
+          positions[i * 3] = pt.x;
+          positions[i * 3 + 1] = pt.y;
+          positions[i * 3 + 2] = pt.z;
+        }
+        sys.points.geometry.attributes.position.needsUpdate = true;
+      });
+
+      // Cable particles & halo color
+      if (v2gReverse) {
+        cableFlow.points.material.color.setHex(0xf59e0b);
+        haloMat.color.setHex(0xf59e0b);
+        haloMat.emissive.setHex(0xf59e0b);
+        chargerHaloLight.color.setHex(0xf59e0b);
+      } else {
+        cableFlow.points.material.color.setHex(0x38bdf8);
+        haloMat.color.setHex(0x10b981);
+        haloMat.emissive.setHex(0x10b981);
+        chargerHaloLight.color.setHex(0x10b981);
+      }
+
+      // Warning pulse for grid stress
+      const currentMode = SLIDES[currentSlideIdx].mode;
+      if (currentMode === 'grid_stress') {
+        const pulse = (Math.sin(time * 6) + 1) / 2;
+        warningRing.material.opacity = 0.3 + pulse * 0.5;
+        warningRing.scale.setScalar(1 + pulse * 0.8);
+        substationLight.intensity = 2.0 + pulse * 3.0;
+      } else {
+        warningRing.material.opacity = 0;
+        substationLight.intensity = 1.0;
+      }
+
+      // Scanner animation
+      if (isScanning || currentMode === 'scanner_diagnostic') {
+        const scanY = 0.2 + Math.abs(Math.sin(time * 2.5)) * 2.4;
+        scanPlane.position.y = scanY;
+        scanRing.position.y = scanY;
+        scanRing.rotation.z += 0.03;
+        scanPlane.material.opacity = 0.25;
+        scanRing.material.opacity = 0.85;
+
+        batteryCells.forEach((c, idx) => {
+          c.material.emissiveIntensity = 0.4 + Math.sin(time * 5 + idx * 0.4) * 0.6;
+        });
+      } else {
+        scanPlane.material.opacity = 0;
+        scanRing.material.opacity = 0;
+      }
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // UI RENDER LOGIC
+    function renderSlide(idx) {
+      currentSlideIdx = idx;
+      const s = SLIDES[idx];
+
+      targetCameraPos.set(...s.cam.pos);
+      targetLookAt.set(...s.cam.target);
+      if (s.cam.fov) {
+        camera.fov = s.cam.fov;
+        camera.updateProjectionMatrix();
+      }
+
+      v2gReverse = s.mode === 'v2g_reverse';
+
+      // Update Header
+      document.getElementById('header-slide-num').textContent = s.num;
+      document.getElementById('progress-bar').style.width = `${((idx + 1) / SLIDES.length) * 100}%`;
+
+      // Update Card
+      document.getElementById('slide-badge-num').textContent = `SLIDE ${s.num}`;
+      document.getElementById('slide-category').textContent = s.category;
+      document.getElementById('slide-badge').textContent = s.badge;
+      document.getElementById('slide-title').textContent = s.title;
+      document.getElementById('slide-subtitle').textContent = s.subtitle;
+      document.getElementById('slide-summary').textContent = s.summary;
+
+      // Badges
+      document.getElementById('live-v2g-badge').classList.toggle('hidden', !v2gReverse);
+      document.getElementById('live-scan-badge').classList.toggle('hidden', s.mode !== 'scanner_diagnostic');
+
+      // Keypoints
+      const kpContainer = document.getElementById('slide-keypoints');
+      kpContainer.innerHTML = s.keyPoints.map(kp => `
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 flex flex-col justify-between">
+          <div>
+            <span class="inline-block text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 mb-1.5">${kp.tag}</span>
+            <h4 class="text-xs font-bold text-white mb-1">${kp.title}</h4>
+            <p class="text-[11px] text-slate-400 leading-tight">${kp.desc}</p>
+          </div>
+        </div>
+      `).join('');
+
+      // Metrics
+      const mContainer = document.getElementById('slide-metrics');
+      mContainer.innerHTML = s.metrics.map(m => `
+        <div class="bg-slate-900/60 rounded-lg p-2 text-center">
+          <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold block">${m.label}</span>
+          <span class="text-base font-extrabold text-emerald-400 font-mono block">${m.value}</span>
+          <span class="text-[10px] text-cyan-400 font-medium block truncate">${m.trend}</span>
+        </div>
+      `).join('');
+
+      // Dots
+      const dotsContainer = document.getElementById('slide-dots');
+      dotsContainer.innerHTML = SLIDES.map((slide, i) => `
+        <button onclick="window.goToSlide(${i})" class="transition-all rounded-full ${
+          i === idx ? 'w-6 h-2 bg-gradient-to-r from-emerald-400 to-cyan-400 shadow-sm shadow-cyan-400/50' : 'w-2 h-2 bg-slate-700 hover:bg-slate-500'
+        }" title="Slide ${slide.num}: ${slide.title}"></button>
+      `).join('');
+
+      // Speaker Notes
+      document.getElementById('notes-target-slide').textContent = `Slide ${s.num} Target`;
+      document.getElementById('notes-target-title').textContent = s.title;
+      document.getElementById('notes-content').textContent = `"${s.notes}"`;
+      document.getElementById('notes-arch').innerHTML = `
+        <p><strong class="text-cyan-400">1. Edge:</strong> ${s.arch.edge}</p>
+        <p><strong class="text-emerald-400">2. Ingest:</strong> ${s.arch.ingest}</p>
+        <p><strong class="text-amber-400">3. Cloud:</strong> ${s.arch.cloud}</p>
+      `;
+
+      if (isFreeOrbit) {
+        toggleOrbit(false);
+      }
+    }
+
+    window.goToSlide = (idx) => {
+      renderSlide(idx);
+      playSound('slide');
+    };
+
+    function nextSlide() {
+      const next = (currentSlideIdx + 1) % SLIDES.length;
+      goToSlide(next);
+    }
+
+    function prevSlide() {
+      const prev = currentSlideIdx > 0 ? currentSlideIdx - 1 : SLIDES.length - 1;
+      goToSlide(prev);
+    }
+
+    function toggleOrbit(force) {
+      isFreeOrbit = force !== undefined ? force : !isFreeOrbit;
+      controls.enabled = isFreeOrbit;
+      if (isFreeOrbit) {
+        controls.target.copy(currentLookAt);
+      }
+      const btn = document.getElementById('btn-orbit');
+      const text = document.getElementById('btn-orbit-text');
+      if (isFreeOrbit) {
+        btn.classList.add('bg-cyan-500', 'text-slate-950', 'border-cyan-400', 'font-bold');
+        text.textContent = 'Free Orbit (Active)';
+      } else {
+        btn.classList.remove('bg-cyan-500', 'text-slate-950', 'border-cyan-400', 'font-bold');
+        text.textContent = 'Free 3D Orbit [O]';
+      }
+    }
+
+    // EVENT LISTENERS
+    document.getElementById('btn-next').addEventListener('click', nextSlide);
+    document.getElementById('btn-prev').addEventListener('click', prevSlide);
+
+    document.getElementById('btn-orbit').addEventListener('click', () => {
+      toggleOrbit();
+      playSound('click');
+    });
+
+    document.getElementById('btn-scan').addEventListener('click', () => {
+      isScanning = true;
+      playSound('scan');
+      setTimeout(() => { isScanning = false; }, 4500);
+    });
+
+    document.getElementById('btn-v2g').addEventListener('click', () => {
+      v2gReverse = !v2gReverse;
+      playSound('v2g');
+      document.getElementById('live-v2g-badge').classList.toggle('hidden', !v2gReverse);
+      document.getElementById('btn-v2g-text').textContent = v2gReverse ? 'V2G Discharging' : 'Reverse V2G Flow';
+    });
+
+    document.getElementById('btn-sound').addEventListener('click', () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('btn-sound').textContent = soundEnabled ? '🔊' : '🔇';
+    });
+
+    document.getElementById('btn-theme').addEventListener('click', () => {
+      currentTheme = currentTheme === 'cyber' ? 'golden' : 'cyber';
+      if (currentTheme === 'golden') {
+        scene.background.set(0x1a120b);
+        scene.fog.color.set(0x1a120b);
+        ambientLight.color.set(0x52361b);
+        dirLight.color.set(0xffa726);
+        document.getElementById('btn-theme').textContent = '🌙';
+      } else {
+        scene.background.set(0x070c14);
+        scene.fog.color.set(0x070c14);
+        ambientLight.color.set(0x1a2639);
+        dirLight.color.set(0xa5c9ff);
+        document.getElementById('btn-theme').textContent = '☀️';
+      }
+      playSound('click');
+    });
+
+    document.getElementById('btn-fullscreen').addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+      playSound('click');
+    });
+
+    // Notes Drawer
+    const notesDrawer = document.getElementById('notes-drawer');
+    document.getElementById('btn-notes').addEventListener('click', () => {
+      notesDrawer.classList.toggle('hidden');
+      notesDrawer.classList.toggle('flex');
+      playSound('click');
+    });
+    document.getElementById('btn-close-notes').addEventListener('click', () => {
+      notesDrawer.classList.add('hidden');
+      notesDrawer.classList.remove('flex');
+    });
+
+    // Grid Modal
+    const gridModal = document.getElementById('grid-modal');
+    function openGrid() {
+      const container = document.getElementById('grid-cards-container');
+      container.innerHTML = SLIDES.map((s, idx) => `
+        <div onclick="window.goToSlide(${idx}); document.getElementById('grid-modal').classList.add('hidden'); document.getElementById('grid-modal').classList.remove('flex');"
+          class="cursor-pointer rounded-2xl p-5 border transition-all duration-200 group flex flex-col justify-between ${
+            idx === currentSlideIdx ? 'bg-slate-900 border-cyan-400 shadow-xl ring-2 ring-cyan-500/20' : 'bg-slate-950/70 border-slate-800 hover:border-slate-700 hover:bg-slate-900/80'
+          }">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-mono font-bold text-cyan-400">${s.num}</span>
+              <span class="text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300">${s.category}</span>
+            </div>
+            <h4 class="text-base font-bold text-white group-hover:text-cyan-300 transition-colors mb-1.5">${s.title}</h4>
+            <p class="text-xs text-slate-400 line-clamp-2 mb-3">${s.summary}</p>
+          </div>
+          <div class="flex items-center justify-between pt-3 border-t border-slate-800/80 text-[11px] text-slate-400">
+            <span class="text-emerald-400 font-semibold">${s.badge}</span>
+            <span class="text-cyan-400 font-bold group-hover:translate-x-1 transition-transform">Jump ↗</span>
+          </div>
+        </div>
+      `).join('');
+      gridModal.classList.remove('hidden');
+      gridModal.classList.add('flex');
+      playSound('click');
+    }
+    document.getElementById('btn-open-grid').addEventListener('click', openGrid);
+    document.getElementById('btn-deck-grid').addEventListener('click', openGrid);
+    document.getElementById('btn-close-grid').addEventListener('click', () => {
+      gridModal.classList.add('hidden');
+      gridModal.classList.remove('flex');
+    });
+
+    // Auto Play
+    let autoPlayTimer = null;
+    let isAutoPlay = false;
+    document.getElementById('btn-autoplay').addEventListener('click', () => {
+      isAutoPlay = !isAutoPlay;
+      const btn = document.getElementById('btn-autoplay');
+      if (isAutoPlay) {
+        btn.textContent = '⏸';
+        btn.classList.add('text-emerald-400', 'bg-emerald-500/20');
+        autoPlayTimer = setInterval(nextSlide, 12000);
+      } else {
+        btn.textContent = '▶';
+        btn.classList.remove('text-emerald-400', 'bg-emerald-500/20');
+        if (autoPlayTimer) clearInterval(autoPlayTimer);
+      }
+      playSound('click');
+    });
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'o' || e.key === 'O') {
+        toggleOrbit();
+      } else if (e.key === 'n' || e.key === 'N') {
+        notesDrawer.classList.toggle('hidden');
+        notesDrawer.classList.toggle('flex');
+      } else if (e.key === 'f' || e.key === 'F') {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      } else if (e.key === 'Escape') {
+        notesDrawer.classList.add('hidden');
+        notesDrawer.classList.remove('flex');
+        gridModal.classList.add('hidden');
+        gridModal.classList.remove('flex');
+      }
+    });
+
+    // Initial render
+    renderSlide(0);
+  </script>
+</body>
+</html>

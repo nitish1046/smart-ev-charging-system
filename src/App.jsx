@@ -29,8 +29,20 @@ import ProfileView from './components/dashboard/ProfileView';
 import AuthModal from './components/auth/AuthModal';
 import DigitalBillModal from './components/dashboard/DigitalBillModal';
 
+import Presentation3DDeck from './components/presentation/Presentation3DDeck';
+
 function AppContent() {
   const { viewMode, currentAppTab } = useEV();
+
+  // If in 3D Presentation / PPT mode, render immersive fullscreen presentation deck
+  if (viewMode === 'presentation') {
+    return (
+      <>
+        <Presentation3DDeck />
+        <ToastContainer />
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-[#0F172A] selection:bg-emerald-500 selection:text-white">

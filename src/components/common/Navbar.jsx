@@ -14,6 +14,7 @@ import {
   User,
   ExternalLink,
   Sparkles,
+  Layers,
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -246,6 +247,18 @@ export default function Navbar() {
               </>
             )}
 
+            {/* 3D PPT Presentation Deck Button */}
+            <button
+              onClick={() => setViewMode('presentation')}
+              className="px-3.5 py-2 text-xs font-bold text-white bg-gradient-to-r from-cyan-600 via-sky-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 rounded-xl shadow-md shadow-cyan-600/25 transition transform active:scale-95 flex items-center gap-1.5 border border-cyan-400/30"
+              title="Launch Interactive 3D Presentation (PPT Deck with 3D Animations)"
+            >
+              <span className="w-2 h-2 rounded-full bg-cyan-300 animate-ping"></span>
+              <Layers className="w-4 h-4 text-cyan-200" />
+              <span>3D PPT Deck</span>
+              <span className="px-1.5 py-0.5 bg-white/20 text-[10px] rounded-full uppercase tracking-wider font-mono">3D</span>
+            </button>
+
             {viewMode === 'landing' && (
               <button
                 onClick={() => {
@@ -334,6 +347,16 @@ export default function Navbar() {
           </div>
 
           <div className="pt-3 border-t border-slate-200 flex flex-col gap-2">
+            <button
+              onClick={() => {
+                setViewMode('presentation');
+                setMobileMenuOpen(false);
+              }}
+              className="w-full py-2.5 text-center text-sm font-bold text-white bg-gradient-to-r from-cyan-600 via-sky-600 to-indigo-600 rounded-xl shadow-md flex items-center justify-center gap-2"
+            >
+              <Layers className="w-4 h-4 text-cyan-200" />
+              <span>Launch 3D PPT Deck</span>
+            </button>
             <button
               onClick={() => {
                 setViewMode('app');

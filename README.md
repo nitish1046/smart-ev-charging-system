@@ -30,7 +30,26 @@ The platform solves core EV charging bottlenecks:
 - **System Architecture**: Interactive full-stack topology diagram with clickable inspection nodes.
 - **Real-World Impact**: Environmental metrics tracking CO₂ emissions offset and mature trees saved.
 
-### 2. SaaS Application & User Dashboard
+### 2. 🌟 3D Interactive Presentation Deck (3D PPT)
+- **Real-Time 3D Microgrid & Station Scene (Three.js)**:
+  - Procedural DC fast charging dispenser with an animated **dynamic LCD screen canvas texture** showing live kW, SOC%, Voltage, and Amps.
+  - Aerodynamic EV model with a **transparent chassis reveal exposing illuminated modular battery cells**.
+  - Cantilevered Solar PV canopy with downward photon ripples.
+  - Commercial Battery Energy Storage System (BESS) container with **spinning cooling fans** and LED charge indicators.
+  - Grid Substation transformer with high-voltage bushings and pulsing overload warning rings.
+- **Dynamic 3D Animations**:
+  - **Bi-Directional Particle Streams**: Grid, Solar, BESS, and Charger-to-EV power flows.
+  - **Live V2G Mode**: Reverse energy flow from the EV battery back into the microgrid and grid transformer.
+  - **Holographic Digital Twin Scanner**: Sweeping laser diagnostics plane and wireframe ring for predictive maintenance.
+  - **Camera Choreography**: Cinematic ease-out camera flights across 11 structured slides.
+- **Presenter Tools**:
+  - **Free 3D Orbit Mode (`O`)**: Unlock camera to freely rotate, pan, and zoom into any 3D asset at any time.
+  - **Speaker Notes Drawer (`N`)**: Complete teleprompter scripts, layer references, and Q&A cues.
+  - **Slide Deck Grid Modal**: 1-click thumbnail jump to any of the 11 slides.
+  - **Web Audio API Sound FX**: Slide switch whooshes, diagnostic scan chimes, and electrical hums.
+  - **Standalone Mode**: Opens directly via `presentation.html` in any browser with zero dependencies!
+
+### 3. SaaS Application & User Dashboard
 - **My EVs Garage**: Full CRUD vehicle registry with real-time battery SoC indicators and port specifications.
 - **5-Slot Visual Station Dashboard**: Physical bay layout with color indicators:
   - `Slot 01` — Available (50 kW DC Fast • CCS2)
@@ -48,9 +67,11 @@ The platform solves core EV charging bottlenecks:
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: React 18, Tailwind CSS, Lucide React Icons, Recharts
+- **3D Graphics & WebGL**: Three.js, OrbitControls, Procedural Canvas Textures, Additive Blending Particle Systems
+- **Frontend Framework**: React 18, Tailwind CSS, Lucide React Icons, Recharts
+- **Audio Synthesis**: Web Audio API (real-time procedural sound effects)
 - **Core OOP Foundations**: C++ Class Architecture, Encapsulation, Parameterized Constructors, Static Methods, `std::vector`, `fstream` Disk Persistence
-- **Build Tool**: Vite
+- **Build Tool**: Vite 5
 - **Storage**: Browser `localStorage` reactive data layer (zero external database setup required for demo evaluation)
 
 ---

@@ -12,6 +12,7 @@ import {
   Clock,
   Sparkles,
   CheckCircle2,
+  Layers,
 } from 'lucide-react';
 
 export default function HeroSection() {
@@ -62,13 +63,24 @@ export default function HeroSection() {
             {/* CTA Buttons */}
             <div className="flex flex-wrap items-center gap-3.5 pt-2">
               <button
+                onClick={() => setViewMode('presentation')}
+                className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-600 via-sky-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-elevated shadow-cyan-600/30 transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2.5 border border-cyan-400/40"
+              >
+                <Layers className="w-4 h-4 text-cyan-200" />
+                <span>Launch 3D PPT Deck</span>
+                <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] uppercase tracking-wider font-mono">
+                  11 Slides
+                </span>
+              </button>
+
+              <button
                 onClick={() => {
                   setViewMode('app');
                   setCurrentAppTab('dashboard');
                 }}
                 className="px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-elevated shadow-emerald-600/25 transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2.5"
               >
-                Get Started
+                Launch App Console
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -77,7 +89,7 @@ export default function HeroSection() {
                   const el = document.getElementById('features');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="px-6 py-3.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm border border-slate-200 shadow-sm transition transform hover:-translate-y-0.5"
+                className="px-5 py-3.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm border border-slate-200 shadow-sm transition transform hover:-translate-y-0.5"
               >
                 Explore Features
               </button>
